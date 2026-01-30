@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widget/appbar.dart';
 import 'package:frontend/widget/chart.dart';
 import 'package:frontend/widget/portfolio.dart';
+import 'package:frontend/widget/testchart.dart';
 
 class TradingDashboard extends StatefulWidget {
   const TradingDashboard({super.key});
@@ -25,7 +26,13 @@ class _TradingDashboardState extends State<TradingDashboard> {
             child: Row(
               children: [
                 // Left Side - Chart
-                Expanded(flex: 7, child: chartSection()),
+                Expanded(
+                  flex: 7,
+                  child: Scaffold(
+                    appBar: AppBar(title: const Text("Strategy Dashboard")),
+                    body: const ChartView(),
+                  ),
+                ),
 
                 // Right Side - Portfolio
                 Container(
