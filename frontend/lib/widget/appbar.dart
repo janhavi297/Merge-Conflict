@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 // this widget is for app bar on the dashboard website
-Widget topAppBar() {
+Widget topAppBar(String a, String b, String c) {
   return Container(
+    color: Color(0xFF000000),
     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
     child: Row(
       children: [
@@ -24,7 +25,7 @@ Widget topAppBar() {
             ),
             const SizedBox(width: 12),
             const Text(
-              'NocturneCapital',
+              'Nocturne Capital',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -37,18 +38,18 @@ Widget topAppBar() {
         const Spacer(),
 
         // Navigation
-        _buildNavItem('Dashboard', true),
+        buildNavItem(a, true),
         const SizedBox(width: 40),
-        _buildNavItem('Trade', false),
+        buildNavItem(b, false),
         const SizedBox(width: 40),
-        _buildNavItem('Market', false),
+        buildNavItem(c, false),
       ],
     ),
   );
 }
 
 // this widget is for color change on the tabs of dashboard
-Widget _buildNavItem(String title, bool isActive) {
+Widget buildNavItem(String title, bool isActive) {
   return Text(
     title,
     style: TextStyle(
