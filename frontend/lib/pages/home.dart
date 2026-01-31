@@ -20,7 +20,12 @@ class _NocturnHomeState extends State<NocturnHome> {
       body: Column(
         children: [
           // 1. Navigation Bar
-          topAppBar("Dashboard", "Insights", "Our Edge"),
+          topAppBar(
+            true,
+            false,
+            false,
+            false,
+          ),
 
           Expanded(
             child: SingleChildScrollView(
@@ -44,13 +49,15 @@ class _NocturnHomeState extends State<NocturnHome> {
   Widget middleSection() {
     return Column(
       children: [
-        const Text(
-          'NOCTURN CAPITALS',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 64,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 8,
+        Center(
+          child: const Text(
+            'NOCTURN CAPITALS',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 64,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 8,
+            ),
           ),
         ),
         const SizedBox(height: 15),

@@ -19,7 +19,7 @@ class _TradingDashboardState extends State<TradingDashboard> {
       body: Column(
         children: [
           // App Bar
-          topAppBar('Dashboard', 'Market', 'Trade'),
+          topAppBar(false, true, false, false),
 
           // Main Content
           Expanded(

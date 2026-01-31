@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/home.dart';
 
 // this widget is for app bar on the dashboard website
-Widget topAppBar(String a, String b, String c) {
+Widget topAppBar(
+  bool A,
+  bool B,
+  bool C,
+  bool D,
+) {
   return Container(
     color: Color(0xFF000000),
     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
@@ -38,11 +44,13 @@ Widget topAppBar(String a, String b, String c) {
         const Spacer(),
 
         // Navigation
-        buildNavItem(a, true),
+        buildNavItem('Home', A),
         const SizedBox(width: 40),
-        buildNavItem(b, false),
+        buildNavItem('Dashboard', B),
         const SizedBox(width: 40),
-        buildNavItem(c, false),
+        buildNavItem('News', C),
+        const SizedBox(width: 40),
+        buildNavItem('About Us', D),
       ],
     ),
   );

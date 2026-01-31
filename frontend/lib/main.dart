@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/aboutus.dart';
 import 'package:frontend/pages/dashboard.dart';
 import 'package:frontend/pages/home.dart';
 import 'package:google_fonts/google_fonts.dart';
