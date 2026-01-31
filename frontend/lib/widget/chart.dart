@@ -1,89 +1,90 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-
-
 Widget chartSection() {
-  return Padding(
-    padding: const EdgeInsets.all(32),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Currency Selector and Price
-        Row(
-          children: [
-            // Currency Icons
-            Icon(Icons.money, color: Colors.white),
-            const SizedBox(width: 16),
-            const Text(
-              'IndexName',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 8),
-            const Icon(Icons.keyboard_arrow_down, color: Colors.white54),
-          ],
-        ),
-
-        const SizedBox(height: 24),
-
-        // Price and Change
-        Row(
-          children: [
-            const Text(
-              '\$3,615.86',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(width: 16),
-
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text(
-                '+3.27% today',
+  return Container(
+    color: const Color(0xFF000000),
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Currency Selector and Price
+          Row(
+            children: [
+              // Currency Icons
+              Icon(Icons.money, color: Colors.white),
+              const SizedBox(width: 16),
+              const Text(
+                'IndexName',
                 style: TextStyle(
-                  color: Colors.green,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-
-            const Spacer(),
-
-            // Chart Type Icons
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.show_chart, color: Colors.white54),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.bar_chart, color: Colors.white54),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 8),
-
-        // Chart
-        Expanded(child: buildChart()),
-
-        const SizedBox(height: 24),
-
-        // Exchange List
-        buildExchangeList(),
-      ],
+              const SizedBox(width: 8),
+              const Icon(Icons.keyboard_arrow_down, color: Colors.white54),
+            ],
+          ),
+    
+          const SizedBox(height: 24),
+    
+          // Price and Change
+          Row(
+            children: [
+              const Text(
+                '\$3,615.86',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+    
+              const SizedBox(width: 16),
+    
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  '+3.27% today',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+    
+              const Spacer(),
+    
+              // Chart Type Icons
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.show_chart, color: Colors.white54),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.bar_chart, color: Colors.white54),
+              ),
+            ],
+          ),
+    
+          const SizedBox(height: 8),
+    
+          // Chart
+          Expanded(child: buildChart()),
+    
+          const SizedBox(height: 24),
+    
+          // Exchange List
+          buildExchangeList(),
+        ],
+      ),
     ),
   );
 }

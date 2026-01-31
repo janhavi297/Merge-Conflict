@@ -19,7 +19,7 @@ class _TradingDashboardState extends State<TradingDashboard> {
       body: Column(
         children: [
           // App Bar
-          topAppBar(),
+          topAppBar(false, true, false, false),
 
           // Main Content
           Expanded(
@@ -29,8 +29,14 @@ class _TradingDashboardState extends State<TradingDashboard> {
                 Expanded(
                   flex: 7,
                   child: Scaffold(
-                    appBar: AppBar(title: const Text("Strategy Dashboard")),
-                    body: const TestChart(),
+                    appBar: AppBar(
+                      backgroundColor: Color(0xFF000000),
+                      title: const Text(
+                        "Strategy Dashboard",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    body: chartSection(),
                   ),
                 ),
 
