@@ -1,27 +1,25 @@
 import 'dart:html' as html;
-import 'dart:ui' as ui;
+import 'dart:ui_web' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
-class ChartView extends StatelessWidget {
-  const ChartView({super.key});
+class TestChart extends StatelessWidget {
+  const TestChart({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb) {
-      // ignore: undefined_prefixed_name
-      ui.platformViewRegistry.registerViewFactory(
-        'chart-view',
-        (int viewId) => html.IFrameElement()
+    ui.platformViewRegistry.registerViewFactory(
+      'chart-view',
+      (int viewId) {
+        final iframe = html.IFrameElement()
           ..src = 'http://127.0.0.1:8000/chart'
-          ..style.border = 'none',
-      );
+          ..style.border = 'none'
+          ..style.width = '100%'
+          ..style.height = '100%';
 
-      return const HtmlElementView(viewType: 'chart-view');
-    }
-
-    return const Center(
-      child: Text('Chart view is only available on Web'),
+        return iframe;
+      },
     );
+
+    return const HtmlElementView(viewType: 'chart-view');
   }
 }

@@ -30,7 +30,7 @@ class _TradingDashboardState extends State<TradingDashboard> {
                   flex: 7,
                   child: Scaffold(
                     appBar: AppBar(title: const Text("Strategy Dashboard")),
-                    body: const ChartView(),
+                    body: const TestChart(),
                   ),
                 ),
 

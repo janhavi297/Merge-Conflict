@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from app.strategy import generate_chart
+from backend.app.test_strategy import generate_chart
 
 app = FastAPI()
 
