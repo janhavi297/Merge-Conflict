@@ -120,6 +120,8 @@ function navTo(pageId) {
 
 
         if (pageId === "historical") {
+                loadPerformance();                 // ✅ ADD THIS
+
             renderBacktestChart("backtest-chart");
         }
 
@@ -322,5 +324,24 @@ async function loadRecommendation() {
         console.error("Failed to load recommendation", err);
         panel.innerHTML =
             "<p class='text-gray-500 text-sm'>Failed to load recommendation.</p>";
+    }
+}
+
+async function loadPerformance() {
+    try {
+        const res = await fetch(`${API_BASE}/performance`);
+        const data = await res.json();
+
+        document.getElementById("cagr-value").textContent =
+            `${data.cagr.toFixed(2)}%`;
+
+        document.getElementById("maxdd-value").textContent =
+            `${data.max_drawdown.toFixed(2)}%`;
+
+        document.getElementById("sharpe-value").textContent =
+            data.sharpe.toFixed(2);
+
+    } catch (err) {
+        console.error("Failed to load performance", err);
     }
 }

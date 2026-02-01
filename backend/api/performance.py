@@ -1,42 +1,37 @@
+# api/performance.py
 from fastapi import APIRouter
 import numpy as np
 from strategy.data_loader import load_data
 from strategy.strategy_core import run_strategy
+from strategy.config import CAPITAL
 
 router = APIRouter(prefix="/api", tags=["performance"])
 
 @router.get("/performance")
 def performance():
     df = load_data()
-    _, _, portfolio_bh = run_strategy(df)
+    _, portfolio, _ = run_strategy(df)
 
-    # Strategy daily returns
-    # recompute exactly like notebook
-    daily_return = df.groupby("Date")["StratFractionPnL"].sum()
+    # ===== DAILY RETURNS =====
+    portfolio = portfolio.sort_values("Date")
+    daily_returns = portfolio["PortfolioValue"].pct_change().dropna()
 
-    mean = daily_return.mean()
-    std = daily_return.std()
-    sharpe = float(np.sqrt(252) * mean / std)
+    # ===== CAGR =====
+    years = (portfolio["Date"].iloc[-1] - portfolio["Date"].iloc[0]).days / 365.25
+    cagr = (portfolio["PortfolioValue"].iloc[-1] / CAPITAL) ** (1 / years) - 1
 
-    return {
-        "sharpe": sharpe
-    }
+    # ===== MAX DRAWDOWN =====
+    rolling_max = portfolio["PortfolioValue"].cummax()
+    drawdown = (portfolio["PortfolioValue"] / rolling_max) - 1
+    max_dd = drawdown.min()
 
-
-
-'''from fastapi import APIRouter
-import numpy as np
-
-router = APIRouter(prefix="/api", tags=["performance"])
-
-@router.get("/performance")
-def performance(daily_return: list[float]):
-    mean = np.mean(daily_return)
-    std = np.std(daily_return)
-
-    sharpe = np.sqrt(252) * mean / std
+    # ===== SHARPE RATIO =====
+    sharpe = (
+        daily_returns.mean() / daily_returns.std()
+    ) * np.sqrt(252)   # annualized
 
     return {
-        "sharpe": sharpe
+        "cagr": round(cagr * 100, 2),          # %
+        "max_drawdown": round(max_dd * 100, 2),# %
+        "sharpe": round(sharpe, 2)
     }
-'''
