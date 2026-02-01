@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Nocturne Backtest</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .axis path,
+    .axis line {
+      stroke: white;
+    }
+  </style>
+</head>
+<body>
+    <div id="tooltip"
+      style="
+        position: absolute;
+        background: rgba(0,0,0,0.85);
+        color: white;
+        padding: 8px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        pointer-events: none;
+        opacity: 0;
+      ">
+  </div>
+
+
+<svg id="chart" width="1000" height="500"></svg>
+
+<script src="chart.js"></script>
+</body>
+</html>
