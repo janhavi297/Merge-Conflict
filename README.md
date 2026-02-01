@@ -3,7 +3,7 @@
 ### Overview
 Nocturn Capitals is a long-only overnight strategy built on Indian index futures. Every day we allocate a fixed pool of capital across a portfolio of indexes, enter positions at market close, and liquidate them at the next day's open- using momentum-based strategies and candlestick patterns. The platform maintains a universe of liquid Indian indexes to choose from. On any given day, the algorithm may allocate more capital to certain indexes, less to others, or none at all when no buy signal is generated. There is no shorting; the strategy only makes two decisions: BUY at close or STAY OUT. Risk is controlled through allocation, not leverage or speculation.
 
-Why Indian Index Futures ??
+#### Why Indian Index Futures ??
 Index futures offer lower brokerage and impact costs than trading individual stocks, while indexes themselves carry less company-specific noise and clearer directional structure. Through research, we found the edge to be specific to Indian markets; the same logic fails on global indexes where participant behaviour and overnight dynamics differ.
 
 ### Features
@@ -25,3 +25,4 @@ Index futures offer lower brokerage and impact costs than trading individual sto
 ### Demo Video
 
 ### User Flow
+
