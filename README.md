@@ -24,6 +24,6 @@ Index futures offer lower brokerage and impact costs than trading individual sto
 
 ### Demo Video
 
-### User Flow
+
 
 
