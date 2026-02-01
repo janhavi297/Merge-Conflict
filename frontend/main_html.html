@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="ticker_chart/theme.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nocturn Capital | Model 0.04</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* News Grid Specifics */
+.line-clamp-3 {
+    display: -webkit-box;
+    /* -webkit-line-clamp: 3; */
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}
+
+.news-card::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0; width: 100%; height: 1px;
+    background: #00d4ff;
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.news-card:hover::after {
+    transform: scaleX(1);
+}
+
+/* Line clamping to keep cards uniform */
+.line-clamp-3 {
+    display: -webkit-box;
+    /* -webkit-line-clamp: 3; */
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}
+        :root { --tech-blue: #00d4ff; --deep-navy: #000000; --signal-green: #00ff9d; --alert-red: #ff0055; }
+        body { background-color: var(--deep-navy); color: white; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; cursor: none; }
+        
+        #physics-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(0, 212, 255, 0.15); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); }
+        
+        /* Navigation & Pages */
+        .page { position: absolute; width: 100%; min-height: 100vh; top: 0; left: 0; padding-top: 6rem; display: none; z-index: 10; overflow-y: auto; scroll-behavior: smooth; animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+        .page.active { display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Home Scroll Layout (From 0.03) */
+        .scroll-section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 5rem; }
+
+        /* Strategy Widget (From 0.03) */
+        .strategy-step { transition: all 0.5s ease; border-left: 2px solid rgba(0, 212, 255, 0.1); padding-left: 1.5rem; position: relative; }
+        .strategy-step:hover { border-left: 2px solid var(--tech-blue); background: rgba(0, 212, 255, 0.05); }
+        .step-num { font-family: monospace; color: var(--tech-blue); font-size: 0.75rem; margin-bottom: 0.5rem; display: block; }
+
+        /* Custom Cursor */
+        .custom-cursor { width: 12px; height: 12px; background: var(--tech-blue); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; mix-blend-mode: difference; transition: transform 0.1s ease-out; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: var(--tech-blue); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fff; }
+
+        /* Signal Pulse Animation */
+        .signal-pulse { width: 10px; height: 10px; background: var(--signal-green); border-radius: 50%; box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); animation: pulse-green 2s infinite; }
+        @keyframes pulse-green { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); } }
+    </style>
+</head>
+<body>
+    <canvas id="physics-bg"></canvas>
+    <div class="custom-cursor" id="cursor"></div>
+
+    <audio id="click-sfx" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+    <audio id="hover-sfx" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+
+    <nav class="fixed top-0 w-full flex justify-between items-center px-10 py-5 z-[100] glass border-b border-white/5 bg-opacity-80">
+        <div class="text-2xl font-bold tracking-widest text-white uppercase flex items-center gap-2">
+            NOCTURN <span class="text-[#00d4ff]">CAPITAL</span>
+            <div class="h-2 w-2 bg-[#00d4ff] rounded-full animate-pulse ml-2"></div>
+        </div>
+        <div class="flex gap-8">
+            <button onclick="navTo('home')" class="nav-btn uppercase text-xs tracking-widest font-bold hover:text-cyan-400 transition-colors">Terminal</button>
+            <button onclick="navTo('prediction')" class="nav-btn uppercase text-xs tracking-widest font-bold hover:text-cyan-400 transition-colors">Prediction</button>
+            <button onclick="navTo('historical')" class="nav-btn uppercase text-xs tracking-widest font-bold hover:text-cyan-400 transition-colors">Historical</button>
+            <button onclick="navTo('news')" class="nav-btn uppercase text-xs tracking-widest font-bold hover:text-cyan-400 transition-colors">News</button>
+            <button onclick="navTo('about')" class="nav-btn uppercase text-xs tracking-widest font-bold hover:text-cyan-400 transition-colors">About</button>
+        </div>
+    </nav>
+
+    
+    <section id="home" class="page active">
+        <div class="scroll-section items-center text-center relative">
+            <div class="mb-4 text-cyan-400 text-xs tracking-[0.6em] uppercase animate-pulse border border-cyan-500/30 px-4 py-1 rounded-full bg-cyan-900/10">System Status: Nominal</div>
+            <h1 class="text-8xl font-bold mb-6 tracking-tighter leading-tight">TRADING <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500 to-purple-600">BEYOND THE SUN.</span></h1>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto mb-10">Algorithmic overnight liquidity capture. We trade while the world sleeps.</p>
+            <div class="animate-bounce text-cyan-500/50 flex flex-col items-center">
+                <span class="text-[15px] tracking-widest uppercase mb-2">Brief Tutorial</span>
+                <div class="w-1 h-20 bg-gradient-to-b from-cyan-500 to-transparent"></div>
+            </div>
+        </div>
+
+        <div class="scroll-section bg-gradient-to-b from-transparent to-black/40">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div>
+                    <h2 class="text-5xl font-bold mb-8 tracking-tighter text-white">THE <span class="text-cyan-400">NOCTURN</span><br>PROTOCOL</h2>
+                    <p class="text-gray-400 leading-relaxed mb-8">
+                        Follow our Nocturn Protocol to make easy and low risk profits in Indian indices.
+                    </p>
+                    <button onclick="navTo('prediction')" class="px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-black font-bold tracking-widest transition-all clip-path-polygon">VIEW TODAYS SIGNAL</button>
+                </div>
+                
+                <div class="glass p-10 space-y-8 border-cyan-500/20 shadow-[0_0_50px_rgba(0,212,255,0.05)]">
+                    <div class="strategy-step group" data-step="1">
+                        <span class="step-num">01_ANALYZE</span>
+                        <h4 class="text-white text-xl font-bold group-hover:text-cyan-400 transition">Receive Nocturn Signal</h4>
+                        <p class="text-gray-500 text-sm mt-1">Wait for market close (15:30 IST). The model generates a vector based on daily volatility.</p>
+                    </div>
+                    <div class="strategy-step group" data-step="2">
+                        <span class="step-num">02_EXECUTE</span>
+                        <h4 class="text-white text-xl font-bold group-hover:text-cyan-400 transition">Enter Positions</h4>
+                        <p class="text-gray-500 text-sm mt-1">Buy/Liquidate positions as close to the appropriate time as possible.</p>
+                    </div>
+                    <div class="strategy-step group" data-step="3">
+                        <span class="step-num">03_DORMANT</span>
+                        <h4 class="text-white text-xl font-bold group-hover:text-cyan-400 transition">Overnight Hold</h4>
+                        <p class="text-gray-500 text-sm mt-1">Capitalizing on foreign market impact and overnight gaps.</p>
+                    </div>
+                    <div class="strategy-step group" data-step="4">
+                        <span class="step-num">04_LIQUIDATE</span>
+                        <h4 class="text-white text-xl font-bold group-hover:text-cyan-400 transition">Exit at Open</h4>
+                        <p class="text-gray-500 text-sm mt-1">Positions are closed at 09:15 IST (No Matter What). PnL is realized immediately.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="prediction" class="page p-10 lg:p-32">
+        <div class="flex flex-col h-full justify-center">
+            <h2 class="text-4xl font-bold mb-10 text-cyan-400 border-b border-gray-800 pb-4">DAILY ALGORITHM OUTPUT</h2>
+            <div id="recommendation-panel" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10"></div>
+
+            <!-- <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+                <div class="glass p-8 col-span-2 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-20 text-9xl font-bold text-white pointer-events-none select-none">BUY</div>
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">Current Market Session</p>
+                            <h3 class="text-5xl font-bold text-white">LONG <span class="text-[#00ff9d]">ENTRY</span></h3>
+                        </div>
+                        <div class="signal-pulse"></div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center text-sm border-b border-white/5 pb-2">
+                            <span class="text-gray-400">Asset Allocation</span>
+                            <span class="text-white font-mono">SPY (60%) / QQQ (40%)</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm border-b border-white/5 pb-2">
+                            <span class="text-gray-400">Entry Window</span>
+                            <span class="text-white font-mono">15:55 - 16:00 EST</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-400">Projected Overnight Gap</span>
+                            <span class="text-[#00ff9d] font-mono">+0.42%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-8 flex flex-col justify-center items-center">
+                    <div class="relative w-40 h-40">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="80" cy="80" r="70" stroke="rgba(255,255,255,0.1)" stroke-width="10" fill="none"></circle>
+                            <circle cx="80" cy="80" r="70" stroke="#00d4ff" stroke-width="10" fill="none" stroke-dasharray="440" stroke-dashoffset="66" class="transition-all duration-1000"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-4xl font-bold text-white">85%</span>
+                            <span class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Confidence</span>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
+            <div class="glass p-6 h-[520px] w-full mt-10">
+  <h4 class="text-xs text-gray-500 uppercase tracking-widest mb-4">
+    Index Signal Curve
+  </h4>
+  <div id="ticker-chart"></div>
+</div>
+
+    </section>
+
+    <section id="historical" class="page p-10 lg:p-32">
+        <h2 class="text-4xl font-bold mb-10 text-cyan-400 border-b border-gray-800 pb-4">10-YEAR BACKTEST</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="glass p-6 text-center">
+                <p class="text-xs text-gray-500 uppercase">Total Return</p>
+                <p class="text-3xl font-bold text-[#00ff9d] mt-2">+482.5%</p>
+            </div>
+            <div class="glass p-6 text-center">
+                <p class="text-xs text-gray-500 uppercase">CAGR</p>
+                <p class="text-3xl font-bold text-white mt-2">19.2%</p>
+            </div>
+            <div class="glass p-6 text-center">
+                <p class="text-xs text-gray-500 uppercase">Max Drawdown</p>
+                <p class="text-3xl font-bold text-red-400 mt-2">-12.4%</p>
+            </div>
+            <div class="glass p-6 text-center">
+                <p class="text-xs text-gray-500 uppercase">Sharpe Ratio</p>
+                <p class="text-3xl font-bold text-cyan-400 mt-2">2.25</p>
+            </div>
+        </div>
+
+        <!-- <div class="glass p-6 h-[400px] w-full relative">
+            <h4 class="text-xs text-gray-500 uppercase tracking-widest mb-4 absolute top-6 left-6">Performance vs Benchmark (S&P 500)</h4>
+            <canvas id="historicalChart"></canvas>
+        </div> --> 
+        <!-- <div class="glass p-6 h-[420px] w-full">
+  <h4 class="text-xs text-gray-500 uppercase tracking-widest mb-4">
+    Performance vs Benchmark
+  </h4> -->
+  <div id="backtest-chart"></div>
+<!-- </div> -->
+
+
+        <p class="text-xs text-gray-600 mt-6 font-mono text-center">* Past performance is not indicative of future results. Simulated data for Model 0.04.</p>
+    </section>
+<section id="news" class="page p-6 lg:p-20">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-cyan-500/20 pb-6 gap-4">
+        <div>
+            <h2 class="text-5xl font-bold text-white tracking-tighter uppercase">Neural<span class="text-cyan-400">Feed</span></h2>
+            <p class="text-[10px] font-mono text-cyan-700 tracking-[0.3em] mt-2">ENCRYPTED_DATA_STREAM // SESSION_ACTIVE</p>
+        </div>
+        <div class="glass px-4 py-2 flex items-center gap-6">
+            <div class="text-[10px] font-mono text-gray-400">PACKETS: <span class="text-cyan-400">25</span>/25</div>
+        </div>
+    </div>
+
+    <div id="news-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 overflow-y-auto max-h-[70vh] pr-4">
+    </div>
+</section>
+    <section id="about" class="page p-10 lg:p-32">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-6xl font-bold text-cyan-400 mb-8">ABOUT  <br> NOCTURN.</h2>
+                <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                   
+
+Noctern Capitals is a long‑only overnight strategy built on Indian index futures. Every day we allocate a fixed pool of capital across a portfolio of indexes, enter positions at market close, and liquidate them at the next day’s open—using momentum based strategies and candlestick patterns.<br>
+
+The platform maintains a universe of liquid Indian indexes to choose from. On any given day the algorithm may allocate more capital to certain indexes, less to others, or none at all when no buy signal is generated. There is no shorting; the strategy only makes two decisions: BUY at close or STAY OUT. Risk is controlled through allocation, not leverage or speculation.
+<br><br>
+Why Indian Index Futures??<br>
+Index futures offer lower brokerage and impact costs than trading individual stocks, while indexes themselves carry less company‑specific noise and clearer directional structure. Through research we found the edge to be specific to Indian markets; the same logic fails on global indexes where participant behavior and overnight dynamics differ.
+<br><br>
+What the Platform Offers??<br>
+Noctern Capitals provides a backtesting engine that lets users build their own portfolio from available indexes. After selecting any combination, the system simulates how the strategy would have performed every trading day since 2015 using the close‑to‑open rules.
+<br><br>
+Interactive equity curve based on daily close→open returns<br>
+Allocation logic identical to live strategy
+Drawdown and consistency statistics
+Transparent long‑only exposure with no short risk
+The goal is not to chase intraday volatility but to capture the structured transition between sessions—where global information meets Indian markets. Users can explore how disciplined overnight participation, compounded over years, compares to traditional intraday approaches.
+                </p>
+                <div class="p-6 border-l-2 border-cyan-500 bg-cyan-500/5">
+                    <p class="italic text-gray-300">"Where others see chaos, we see geometric certainty."</p>
+                </div>
+            </div>
+            <div class="glass p-10 relative overflow-hidden">
+                <div class="text-xs font-inter text-cyan-700 mb-6 uppercase tracking-widest">OUR ALGORITHM PERKS ;) </div>
+                <div class="space-y-8">
+                    <div>
+                        <!-- <div class="flex justify-between text-xs mb-2 text-gray-400"><span>ALGORITHMIC EFFICIENCY</span> <span>99.9%</span> </div> -->
+                        <!-- <div class="w-full bg-white/5 h-1"><div class="bg-cyan-500 h-full w-[99%] shadow-[0_0_10px_#00d4ff]"></div></div> -->
+                    </div>
+                    <div>
+                        <p> • OUR ALGORITHM OUTPERFORMS THE INTRADAY RISK/REWARD RATIO IN MOST OF THE INDIAN INDICES  </p> <br>
+                        <br> 
+                        <p>	• Created a backtesting engine covering daily close→open returns since 2015</p>
+                        <!-- <div class="flex justify-between text-xs mb-2 text-gray-400"><span>PREDICTION ACCURACY (MA)</span><span>76.2%</span></div> -->
+                        <!-- <div class="w-full bg-white/5 h-1"><div class="bg-purple-500 h-full w-[76%] shadow-[0_0_10px_purple]"></div></div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Libraries FIRST -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<!-- Chart widgets -->
+<script src="backtesting_chart/backtest_widget.js"></script>
+<script src="ticker_chart/ticker_chart.js"></script>
+
+<!-- Main site logic LAST -->
+<script src="script.js"></script>
+
+
+</body>
+</html>
