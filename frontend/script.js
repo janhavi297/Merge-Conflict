@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:9000/api";
+const API_BASE = "https://merge-conflict-bm7shr3cx-janhavis-projects-c55ba700.vercel.app/api";
 
 // --- 1. CORE VARIABLES ---
 const canvas = document.getElementById('physics-bg');
