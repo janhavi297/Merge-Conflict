@@ -293,7 +293,7 @@ async function loadRecommendation() {
                 <div class="text-sm text-gray-300 mb-3">
                     Capital Allocated:
                     <span class="text-[#00ff9d] font-mono">
-                        ₹${(row.CapitalAllocated / 1e6).toFixed(2)}M
+                        ₹${(row.CapitalAllocated / 1e3).toFixed(2)} K
                     </span>
                 </div>
 
