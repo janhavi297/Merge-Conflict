@@ -19,10 +19,7 @@ Index futures offer lower brokerage and impact costs than trading individual sto
 - Data Visualisation: D3.js for the performance graphs.
 - Backend: FastAPI
 - Database/Storage: Integration for historical index data and backtesting logs.
-
-### Installation
-
-### Demo Video
+
 
 
 
